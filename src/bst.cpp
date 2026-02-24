@@ -1,3 +1,8 @@
+#include <vector>
+
+using namespace std;
+
+
 template <typename T>
 class BST<TKey, TVal> {
 private:
@@ -12,10 +17,52 @@ private:
 	Node* root;
 
 public:
-	Insert(const TKey& key, const TVal& value);
-	Delete(const TKey& val)
+	BST() {
+		root = nullptr;
+	}
+
+	BST(vector<pair<TKey, TVal>> v) {
+
+	}
+
+	Node* Insert(const TKey& key, const TVal& value) {
+		if (root==nullptr)
+		{
+			root = {key, value, nullptr, nullptr, nullptr};
+
+			return *root;
+		}
+		else
+		{
+			Node* cur=root;
+			Node* otec=nullptr;
+
+			while (cur!=nullptr)
+			{
+				if (key<cur->parent->k)
+				{
+					otec=cur;
+					cur=cur->left;
+				}
+
+				else {
+					otec=cur;
+					cur=cur->right;
+				}
+			}
+
+			*cur = {key, value, nullptr, nullptr, otec};
+			return cur;
+		}
+
+	}
+
+
+
+	void Delete(const TKey& key)
 	{
-		Node cur = &root;
+		Node* cur = root;
+
 		while (cur->k != key && cur != nullptr)
 		{
 			if (key < cur->k)
@@ -27,21 +74,17 @@ public:
 				cur = cur->right;
 			}
 		}
+
 		if (cur == nullptr)
 		{
 			throw "ne nashel :(";
 		}
+
 		if (cur.left == nullptr && cur.right == nullptr)
 		{
-			if (cur.parent.left == cur)
-			{
-				cur.parent.left = nullptr;
-			}
-			if (cur.parent.right == cur)
-			{
-				cur.parent.right = nullptr;
-			}
+			*cur = {}
 		}
+
 		if (cur.left != nullptr && cur.right == nullptr)
 		{
 			if (cur.parent.left == cur)
@@ -53,6 +96,7 @@ public:
 				cur.parent.right = cur.left;
 			}
 		}
+
 		if (cur.left == nullptr && cur.right != nullptr)
 		{
 			if (cur.parent.left == cur)
@@ -64,6 +108,7 @@ public:
 				cur.parent.right = cur.right;
 			}
 		}
+
 		if (cur.left != nullptr && cur.right != nullptr)
 		{
 			if (cur.parent.left == cur)
@@ -86,6 +131,7 @@ public:
 					cur.parent.left = somepart;
 				}
 			}
+
 			if (cur.parent.right == cur)
 			{
 				Node* somepart = cur.left
@@ -108,6 +154,7 @@ public:
 			}
 		}
 	}
-	TVal& Search(const TKey& key);
+
+	TVal& operator[](const TKey& key);
 }
 
