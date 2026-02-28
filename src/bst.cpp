@@ -1,64 +1,132 @@
+// BST
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
 
-template <typename T>
-class BST<TKey, TVal> {
+template <typename TKey, typename TValue>
+class BST 
+{
 private:
-	struct Node {
-		TKey k;
-		TVal val;
-		Node* left;
-		Node* right;
-		Node* parent;
+	struct BSTNode 
+	{
+		TKey key;
+		TValue value;
+		BSTNode* left;
+		BSTNode* right;
+		BSTNode* parent;
+
+		BSTNode(TKey k, TValue v, BSTNode* l, BSTNode* r, BSTNode* p) 
+		{
+			key = k;
+			value = v;
+			left = l;
+			right = r;
+			parent = p;
+		}
+	};
+
+	BSTNode* fictional;
+	BSTNode* root;
+
+	void print(BSTNode* n) 
+	{
+		if (n == nullptr) 
+			return;
+
+		print(n->left);
+		//cout << n->key << " - " << n->value << endl;  // release
+		if (n == root) {cout << n->key << " - root" << endl;} else if (n == fictional) {cout << n->key << " - dummy" << endl;} else {cout << n->key << " - " << n->parent->key << endl;}   // debug
+		print(n->right);
 	}
 
-	Node* root;
 
 public:
-	BST() {
+	BST() 
+	{	
 		root = nullptr;
+		fictional = new BSTNode(TKey(), TValue(), root, nullptr, nullptr);
 	}
 
-	BST(vector<pair<TKey, TVal>> v) {
 
-	}
-
-	Node* Insert(const TKey& key, const TVal& value) {
-		if (root==nullptr)
+	BST(vector<pair<TKey, TValue>> v) 
+	{
+		for (auto p: v) 
 		{
-			root = {key, value, nullptr, nullptr, nullptr};
-
-			return *root;
+			*this.Insert(p.first, p.second);
 		}
+	}
+
+
+	void Print() 
+	{
+		cout << "BST:" << endl;
+		print(root);
+	}
+
+
+	BSTNode* Insert(const TKey& key, const TValue& value) 
+	{
+		if (root == nullptr)
+		{
+			root = new BSTNode(key, value, nullptr, nullptr, fictional);
+			fictional->left = root;
+
+			return root;
+		}
+
 		else
 		{
-			Node* cur=root;
-			Node* otec=nullptr;
+			BSTNode* current = root;
+			BSTNode* parent = nullptr;
 
-			while (cur!=nullptr)
+			while (current != nullptr)
 			{
-				if (key<cur->parent->k)
+				if (key < current->key)
 				{
-					otec=cur;
-					cur=cur->left;
+					parent = current;
+					current = current->left;
 				}
 
-				else {
-					otec=cur;
-					cur=cur->right;
+				else if (key > current->key)
+				{
+					parent = current;
+					current = current->right;
+				}
+
+				else  // ключ совпал => просто перезаписываем значение, не создавая новый узел
+				{
+					current->value = value;
+
+					return current;
 				}
 			}
 
-			*cur = {key, value, nullptr, nullptr, otec};
-			return cur;
-		}
+			BSTNode* new_node = new BSTNode(key, value, nullptr, nullptr, parent);
 
+			if (key < parent->key)
+		        parent->left = new_node;
+
+		    else
+		        parent->right = new_node;
+
+			return new_node;
+		}
 	}
 
 
+	//BSTNode* GetNext(BSTNode* x) const
+	//{
+	//	if (x->right == nullptr)
+	//	{
+			//y = x->parent;
 
+			//while (y != )
+	//	}
+	//}
+
+	/*
 	void Delete(const TKey& key)
 	{
 		Node* cur = root;
@@ -82,7 +150,14 @@ public:
 
 		if (cur.left == nullptr && cur.right == nullptr)
 		{
-			*cur = {}
+			if (cur.parent.left == cur)
+			{
+				cur.parent.left = nullptr;
+			}
+			if (cur.parent.right == cur)
+			{
+				cur.parent.right = nullptr;
+			}
 		}
 
 		if (cur.left != nullptr && cur.right == nullptr)
@@ -155,6 +230,8 @@ public:
 		}
 	}
 
-	TVal& operator[](const TKey& key);
-}
+	TValue& operator[](const TKey& key) 
+	{
 
+	}*/
+};

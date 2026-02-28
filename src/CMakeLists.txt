@@ -1,1 +1,1 @@
-add_subdirectory ("bst")
+add_library(bst STATIC bst.cpp)
