@@ -1,4 +1,5 @@
 // BST
+// Brusnigin, Zaplatkin
 #include <vector>
 #include <iostream>
 
@@ -36,9 +37,79 @@ private:
 			return;
 
 		print(n->left);
-		//cout << n->key << " - " << n->value << endl;  // release
-		if (n == root) {cout << n->key << " - root" << endl;} else if (n == fictional) {cout << n->key << " - dummy" << endl;} else {cout << n->key << " - " << n->parent->key << endl;}   // debug
+		//cout << "[" << n->key << ", " << n->value << "]" << endl;  // release
+		if (n == root) {cout << "(Key: " << n->key << ", Value: " << n->value << ") - root" << endl;} else if (n == fictional) {cout << "(Key: " << n->key << ", Value: " << n->value << ") - fictional" << endl;} else {cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ")" << endl;}  // debug
 		print(n->right);
+	}
+
+
+	BSTNode* Search(const TKey& key) const
+	{
+		BSTNode* current = root;
+
+		while (current != nullptr && current->key != key)
+		{
+			if (key < current->key)
+				current = current->left;
+
+			else if (key > current->key)
+				current = current->right;
+		}
+
+		if (!current)
+			throw "No node with this key";
+
+		return current;
+	}
+
+
+	BSTNode* GetNext(BSTNode* x) const
+	{
+		BSTNode* y = nullptr;
+
+		if (x->right == nullptr)
+		{
+			y = x->parent;
+
+			while ((y != fictional) && (y->key < x->key))
+			{
+				x = y;
+				y = x->parent;
+			}
+
+			if (y == fictional)
+				throw "No next node for this node";
+
+			return y;
+		}
+
+		else 
+		{
+			y = x->right;
+
+			while (y->left != nullptr)
+				y = y->left;
+
+			return y;
+		}
+	}
+
+
+	BSTNode* GetMinimal() const  // спуск к минимальной ноде
+	{
+		if (root == nullptr) 
+			return nullptr;
+
+		BSTNode* current = root;
+		BSTNode* parent = nullptr;
+		
+		while (current != nullptr)
+		{
+			parent = current;
+			current = current->left;
+		}
+
+		return parent;
 	}
 
 
@@ -52,9 +123,12 @@ public:
 
 	BST(vector<pair<TKey, TValue>> v) 
 	{
+		root = nullptr;
+		fictional = new BSTNode(TKey(), TValue(), root, nullptr, nullptr);
+
 		for (auto p: v) 
-		{
-			*this.Insert(p.first, p.second);
+		{	
+			Insert(p.first, p.second);
 		}
 	}
 
@@ -66,14 +140,14 @@ public:
 	}
 
 
-	BSTNode* Insert(const TKey& key, const TValue& value) 
+	void Insert(const TKey& key, const TValue& value) 
 	{
 		if (root == nullptr)
 		{
 			root = new BSTNode(key, value, nullptr, nullptr, fictional);
 			fictional->left = root;
 
-			return root;
+			return;
 		}
 
 		else
@@ -99,7 +173,7 @@ public:
 				{
 					current->value = value;
 
-					return current;
+					return;
 				}
 			}
 
@@ -111,127 +185,105 @@ public:
 		    else
 		        parent->right = new_node;
 
-			return new_node;
+			return;
 		}
 	}
 
 
-	//BSTNode* GetNext(BSTNode* x) const
-	//{
-	//	if (x->right == nullptr)
-	//	{
-			//y = x->parent;
-
-			//while (y != )
-	//	}
-	//}
-
-	/*
-	void Delete(const TKey& key)
+	const TKey& GetNext(const TKey& key) const
 	{
-		Node* cur = root;
+		BSTNode* x = Search(key);
 
-		while (cur->k != key && cur != nullptr)
-		{
-			if (key < cur->k)
-			{
-				cur = cur->left;
-			}
-			else
-			{
-				cur = cur->right;
-			}
-		}
+		x = GetNext(x);
 
-		if (cur == nullptr)
-		{
-			throw "ne nashel :(";
-		}
-
-		if (cur.left == nullptr && cur.right == nullptr)
-		{
-			if (cur.parent.left == cur)
-			{
-				cur.parent.left = nullptr;
-			}
-			if (cur.parent.right == cur)
-			{
-				cur.parent.right = nullptr;
-			}
-		}
-
-		if (cur.left != nullptr && cur.right == nullptr)
-		{
-			if (cur.parent.left == cur)
-			{
-				cur.parent.left = cur.left;
-			}
-			if (cur.parent.right == cur)
-			{
-				cur.parent.right = cur.left;
-			}
-		}
-
-		if (cur.left == nullptr && cur.right != nullptr)
-		{
-			if (cur.parent.left == cur)
-			{
-				cur.parent.left = cur.right;
-			}
-			if (cur.parent.right == cur)
-			{
-				cur.parent.right = cur.right;
-			}
-		}
-
-		if (cur.left != nullptr && cur.right != nullptr)
-		{
-			if (cur.parent.left == cur)
-			{
-				Node* somepart = cur.right;
-				if (somepart.left == nullptr)
-				{
-					somepart.left = cur.left;
-					cur.parent.left = somepart;
-				}
-				else
-				{
-					while (somepart.left != nullptr)
-					{
-						somepart = somepart.left;
-					}
-					somepart.left = cur.left;
-					somepart.parent.left = somepart.right;
-					somepart.right = cur.right;
-					cur.parent.left = somepart;
-				}
-			}
-
-			if (cur.parent.right == cur)
-			{
-				Node* somepart = cur.left
-					if (somepart.right == nullptr)
-					{
-						somepart.right = cur.right;
-						cur.parent.right = somepart;
-					}
-					else
-					{
-						while (somepart.right != nullptr)
-						{
-							somepart = somepart.right;
-						}
-						somepart.right = cur.right;
-						somepart.parent.right = somepart.left;
-						somepart.left = cur.left;
-						cur.parent.right = somepart;
-					}
-			}
-		}
+		return x->key;
 	}
+
 
 	TValue& operator[](const TKey& key) 
 	{
+		BSTNode* x = GetMinimal();
 
-	}*/
+		if (x == nullptr)
+			throw "No node with this key";
+
+		// обход от минимального
+		while (x->key != key) 
+		{
+			x = GetNext(x);
+		}
+
+		return x->value;
+	}
+
+
+	void Delete(const TKey& key)
+	{
+		BSTNode* x = Search(key);
+		
+
+		// случай 1 (отсутствуют дети)
+		if (!(x->left) && !(x->right))
+		{
+			if (x->parent->left == x)
+				x->parent->left = nullptr;
+
+			else
+				x->parent->right = nullptr;
+
+			delete x;
+
+			return;
+		}
+
+
+		// случай 2.1 (есть left child, нет right child)
+		else if (x->left && !(x->right))
+		{
+			if (x->parent->left == x)
+				x->parent->left = x->left;
+
+			else
+				x->parent->right = x->left;
+
+			x->left->parent = x->parent;
+			delete x;
+
+			return;
+		}
+
+
+		// случай 2.2 (нет left child, есть right child)
+		else if (!(x->left) && x->right)
+		{
+			if (x->parent->left == x)
+				x->parent->left = x->right;
+
+			else
+				x->parent->right = x->right;
+
+			x->right->parent = x->parent;
+			delete x;
+
+			return;
+		}
+
+
+		// случай 3 (есть оба потомка)
+		// ищем successor (наименьший в правом поддереве)
+		else
+		{
+			BSTNode* successor = x->right;
+
+			while (successor->left != nullptr)
+				successor = successor->left;
+
+			x->key = successor->key;  // меняем значения "удаляемой" ноды 
+		    x->value = successor->value;
+
+		    Delete(successor);  // удаляем successor (случай 1 или 2)
+
+			return;
+		}
+	}
 };
