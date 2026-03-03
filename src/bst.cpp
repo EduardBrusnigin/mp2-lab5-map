@@ -38,7 +38,12 @@ private:
 
 		print(n->left);
 		//cout << "[" << n->key << ", " << n->value << "]" << endl;  // release
-		if (n == root) {cout << "(Key: " << n->key << ", Value: " << n->value << ") - root" << endl;} else if (n == fictional) {cout << "(Key: " << n->key << ", Value: " << n->value << ") - fictional" << endl;} else {cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ")" << endl;}  // debug
+		if (n == root) 
+		{cout << "(Key: " << n->key << ", Value: " << n->value << ") - root" << endl;}
+		else if (n == fictional) 
+		{cout << "(Key: " << n->key << ", Value: " << n->value << ") - fictional" << endl;}
+		else
+		{cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ")" << endl;}  // debug
 		print(n->right);
 	}
 

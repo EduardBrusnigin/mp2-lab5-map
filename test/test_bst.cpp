@@ -55,3 +55,21 @@ TEST(BST, can_get_next_node)
     EXPECT_EQ(bst.GetNext(2), 3);
     EXPECT_ANY_THROW(bst.GetNext(7));
 }
+
+TEST(BST, can_search)
+{
+    vector<pair<int, double>> v = { {3, 0}, {1, 0}, {5, 0}, {2, 0}, {7, 0} };
+    BST<int, double> bst(v);
+    EXPECT_EQ(bst.Search(5), 5);
+    EXPECT_ANY_THROW(bst.Search(4));
+}
+
+TEST(BST, can_delete)
+{
+    vector<pair<int, double>> v = { {3, 0}, {1, 0}, {5, 0}, {2, 0}, {7, 0} , {6, 0}, {0,0} };
+    BST<int, double> bst(v);
+    EXPECT_NO_THROW(bst.Delete(6));
+    EXPECT_NO_THROW(bst.Delete(7));
+    EXPECT_NO_THROW(bst.Delete(5));
+    EXPECT_NO_THROW(bst.Delete(1));
+}
