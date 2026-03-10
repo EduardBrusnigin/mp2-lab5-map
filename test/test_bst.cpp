@@ -9,6 +9,7 @@ TEST(BST, is_valid_default_constructor)
     BST<int, double> bst;
 
     ASSERT_NO_THROW(bst);
+    EXPECT_TRUE(bst.is_bst());
 }
 
 
@@ -16,8 +17,8 @@ TEST(BST, is_valid_constructor_by_vector)
 {
     vector<pair<int, double>> v = {{2, 2.1}, {1, 1.3}, {3, 3.4}, {4, 1.5}};
     BST<int, double> bst(v);
-
-    EXPECT_NO_THROW(bst.Print());
+    
+    EXPECT_TRUE(bst.is_bst());
 }
 
 
@@ -28,6 +29,8 @@ TEST(BST, can_insert_node)
     EXPECT_NO_THROW(bst.Insert(0, 3.14));
     EXPECT_NO_THROW(bst.Insert(1, 2.718));
     EXPECT_NO_THROW(bst.Insert(2, -9.123));
+
+    EXPECT_TRUE(bst.is_bst());
 }
 
 
@@ -39,6 +42,7 @@ TEST(BST, can_print_nodes)
     bst.Insert(1, 2.718);
     bst.Insert(2, -9.123);
 
+    EXPECT_TRUE(bst.is_bst());
     EXPECT_NO_THROW(bst.Print());
 }
 
@@ -48,28 +52,32 @@ TEST(BST, can_get_next_node)
     vector<pair<int, double>> v = {{3, 0}, {1, 0}, {5, 0}, {2, 0}, {7, 0}};
 
     BST<int, double> bst(v);
-    EXPECT_NO_THROW(bst.Print());
+    EXPECT_TRUE(bst.is_bst());
     EXPECT_EQ(bst.GetNext(1), 2);
     EXPECT_EQ(bst.GetNext(5), 7);
     EXPECT_EQ(bst.GetNext(3), 5);
     EXPECT_EQ(bst.GetNext(2), 3);
     EXPECT_ANY_THROW(bst.GetNext(7));
+    EXPECT_TRUE(bst.is_bst());
 }
 
 TEST(BST, can_search)
 {
-    vector<pair<int, double>> v = { {3, 0}, {1, 0}, {5, 0}, {2, 0}, {7, 0} };
+    vector<pair<int, double>> v = {{0, 3.14}, {1, -2.7}, {2, 5.1}, {3, 9.9}, {4, -6.3}, {5, 10.13}};
     BST<int, double> bst(v);
-    EXPECT_EQ(bst.Search(5), 5);
-    EXPECT_ANY_THROW(bst.Search(4));
+
+    EXPECT_EQ(bst[3], 9.9);
+    EXPECT_EQ(bst[0], 3.14);
+    EXPECT_EQ(bst[4], -6.3);
+    EXPECT_TRUE(bst.is_bst());
 }
 
 TEST(BST, can_delete)
 {
-    vector<pair<int, double>> v = { {3, 0}, {1, 0}, {5, 0}, {2, 0}, {7, 0} , {6, 0}, {0,0} };
+    vector<pair<int, double>> v = {{0, 3.14}, {1, -2.7}, {2, 5.1}, {3, 9.9}, {4, -6.3}, {5, 10.13}};
     BST<int, double> bst(v);
-    EXPECT_NO_THROW(bst.Delete(6));
-    EXPECT_NO_THROW(bst.Delete(7));
-    EXPECT_NO_THROW(bst.Delete(5));
+    EXPECT_TRUE(bst.is_bst());
     EXPECT_NO_THROW(bst.Delete(1));
+    EXPECT_NO_THROW(bst.Delete(3));
+    EXPECT_TRUE(bst.is_bst());
 }

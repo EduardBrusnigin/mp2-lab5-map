@@ -1,5 +1,5 @@
-// BST
-// Brusnigin, Zaplatkin
+// AVL
+// Brusnigin
 #include <vector>
 #include <iostream>
 
@@ -7,18 +7,18 @@ using namespace std;
 
 
 template <typename TKey, typename TValue>
-class BST 
+class AVL 
 {
 protected:
-	struct BSTNode 
+	struct AVLNode
 	{
 		TKey key;
 		TValue value;
-		BSTNode* left;
-		BSTNode* right;
-		BSTNode* parent;
+		AVLNode* left;
+		AVLNode* right;
+		AVLNode* parent;
 
-		BSTNode(TKey k, TValue v, BSTNode* l, BSTNode* r, BSTNode* p) 
+		AVLNode(TKey k, TValue v, AVLNode* l, AVLNode* r, AVLNode* p) 
 		{
 			key = k;
 			value = v;
@@ -28,10 +28,10 @@ protected:
 		}
 	};
 
-	BSTNode* fictional;
-	BSTNode* root;
+	AVLNode* fictional;
+	AVLNode* root;
 
-	void print(BSTNode* n) 
+	void print(AVLNode* n) 
 	{
 		if (n == nullptr) 
 			return;
@@ -43,9 +43,9 @@ protected:
 	}
 
 
-	BSTNode* Search(const TKey& key) const
+	AVLNode* Search(const TKey& key) const
 	{
-		BSTNode* current = root;
+		AVLNode* current = root;
 
 		while (current != nullptr && current->key != key)
 		{
@@ -63,9 +63,9 @@ protected:
 	}
 
 
-	BSTNode* GetNext(BSTNode* x) const
+	AVLNode* GetNext(AVLNode* x) const
 	{
-		BSTNode* y = nullptr;
+		AVLNode* y = nullptr;
 
 		if (x->right == nullptr)
 		{
@@ -95,13 +95,13 @@ protected:
 	}
 
 
-	BSTNode* GetMinimal() const  // спуск к минимальной ноде
+	AVLNode* GetMinimal() const  // спуск к минимальной ноде
 	{
 		if (root == nullptr) 
 			return nullptr;
 
-		BSTNode* current = root;
-		BSTNode* parent = nullptr;
+		AVLNode* current = root;
+		AVLNode* parent = nullptr;
 		
 		while (current != nullptr)
 		{
@@ -117,14 +117,14 @@ public:
 	BST() 
 	{	
 		root = nullptr;
-		fictional = new BSTNode(TKey(), TValue(), root, nullptr, nullptr);
+		fictional = new AVLNode(TKey(), TValue(), root, nullptr, nullptr);
 	}
 
 
 	BST(vector<pair<TKey, TValue>> v) 
 	{
 		root = nullptr;
-		fictional = new BSTNode(TKey(), TValue(), root, nullptr, nullptr);
+		fictional = new AVLNode(TKey(), TValue(), root, nullptr, nullptr);
 
 		for (auto p: v) 
 		{	
@@ -144,7 +144,7 @@ public:
 	{
 		if (root == nullptr)
 		{
-			root = new BSTNode(key, value, nullptr, nullptr, fictional);
+			root = new AVLNode(key, value, nullptr, nullptr, fictional);
 			fictional->left = root;
 
 			return;
@@ -152,8 +152,8 @@ public:
 
 		else
 		{
-			BSTNode* current = root;
-			BSTNode* parent = nullptr;
+			AVLNode* current = root;
+			AVLNode* parent = nullptr;
 
 			while (current != nullptr)
 			{
@@ -177,7 +177,7 @@ public:
 				}
 			}
 
-			BSTNode* new_node = new BSTNode(key, value, nullptr, nullptr, parent);
+			AVLNode* new_node = new AVLNode(key, value, nullptr, nullptr, parent);
 
 			if (key < parent->key)
 		        parent->left = new_node;
@@ -192,7 +192,7 @@ public:
 
 	const TKey& GetNext(const TKey& key) const
 	{
-		BSTNode* x = Search(key);
+		AVLNode* x = Search(key);
 
 		x = GetNext(x);
 
@@ -202,7 +202,7 @@ public:
 
 	TValue& operator[](const TKey& key) 
 	{
-		BSTNode* x = GetMinimal();
+		AVLNode* x = GetMinimal();
 
 		if (x == nullptr)
 			throw "No node with this key";
@@ -219,7 +219,7 @@ public:
 
 	void Delete(const TKey& key)
 	{
-		BSTNode* x = Search(key);
+		AVLNode* x = Search(key);
 		
 
 		// случай 1 (отсутствуют дети)
@@ -273,7 +273,7 @@ public:
 		// ищем successor (наименьший в правом поддереве)
 		else
 		{
-			BSTNode* successor = x->right;
+			AVLNode* successor = x->right;
 
 			while (successor->left != nullptr)
 				successor = successor->left;
@@ -293,7 +293,7 @@ public:
 	    if (root == nullptr)
 	        return true;
 	    
-	    BSTNode* current = GetMinimal();
+	    AVLNode* current = GetMinimal();
 	    TKey prev_key = current->key;
 	    
 	    while (true) 
