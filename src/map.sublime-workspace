@@ -1029,14 +1029,21 @@
 	},
 	"expanded_folders":
 	[
+		"/home/eduard/Desktop/Projects/gitlab/avl-tree"
 	],
 	"file_history":
 	[
+		"/home/eduard/Desktop/Projects/gitlab/avl-tree/src/bst.h",
+		"/home/eduard/Desktop/Projects/gitlab/quick_sort/README.md",
+		"/home/eduard/Desktop/Projects/gitlab/quick_sort/quick_sort.cpp",
+		"/home/eduard/Desktop/University/mp2-lab5-map/test/test_bst.cpp",
+		"/home/eduard/Desktop/University/mp2-lab5-map/src/redblack.cpp",
+		"/home/eduard/Desktop/University/mp2-lab5-map/src/avl.cpp",
+		"/home/eduard/Desktop/University/mp2-lab5-map/src/bst.cpp",
+		"/home/eduard/Desktop/University/mp2-lab5-map/test/test_avl.cpp",
 		"/home/eduard/Desktop/University/mp2-lab5-map/CMakeLists.txt",
 		"/home/eduard/Desktop/University/mp2-lab5-map/src/CMakeLists.txt",
 		"/home/eduard/Desktop/University/mp2-lab5-map/test/test_main.cpp",
-		"/home/eduard/Desktop/University/mp2-lab5-map/test/test_bst.cpp",
-		"/home/eduard/Desktop/University/mp2-lab5-map/src/bst.cpp",
 		"/home/eduard/Desktop/University/mp2-lab5-map/.gitignore",
 		"/home/eduard/Desktop/University/mp2-lab5-map/src/map.sublime-project",
 		"/home/eduard/Desktop/University/mp2-lab5-map/test/CMakeLists.txt",
@@ -1127,6 +1134,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"BSTNode",
+			"EXCEPT",
 			"int64_t",
 			"uint64_t",
 			"unsigned long long",
@@ -1153,6 +1162,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"AVLNode",
+			"EXPECT",
 			"int",
 			"int64_t",
 			"uint64_t",
@@ -1176,7 +1187,7 @@
 		"show_context": true,
 		"use_buffer2": true,
 		"use_gitignore": true,
-		"whole_word": true,
+		"whole_word": false,
 		"wrap": true
 	},
 	"groups":

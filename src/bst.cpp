@@ -6,32 +6,14 @@
 using namespace std;
 
 
-template <typename TKey, typename TValue>
-class BST 
+template <typename TKey, typename TValue, typename TNode>
+class Tree
 {
 protected:
-	struct BSTNode 
-	{
-		TKey key;
-		TValue value;
-		BSTNode* left;
-		BSTNode* right;
-		BSTNode* parent;
+	TNode* fictional;
+	TNode* root;
 
-		BSTNode(TKey k, TValue v, BSTNode* l, BSTNode* r, BSTNode* p) 
-		{
-			key = k;
-			value = v;
-			left = l;
-			right = r;
-			parent = p;
-		}
-	};
-
-	BSTNode* fictional;
-	BSTNode* root;
-
-	void print(BSTNode* n) 
+	void print(TNode* n) 
 	{
 		if (n == nullptr) 
 			return;
@@ -43,9 +25,9 @@ protected:
 	}
 
 
-	BSTNode* Search(const TKey& key) const
+	TNode* Search(const TKey& key) const
 	{
-		BSTNode* current = root;
+		TNode* current = root;
 
 		while (current != nullptr && current->key != key)
 		{
@@ -63,9 +45,9 @@ protected:
 	}
 
 
-	BSTNode* GetNext(BSTNode* x) const
+	TNode* GetNext(TNode* x) const
 	{
-		BSTNode* y = nullptr;
+		TNode* y = nullptr;
 
 		if (x->right == nullptr)
 		{
@@ -95,13 +77,13 @@ protected:
 	}
 
 
-	BSTNode* GetMinimal() const  // спуск к минимальной ноде
+	TNode* GetMinimal() const  // спуск к минимальной ноде
 	{
 		if (root == nullptr) 
 			return nullptr;
 
-		BSTNode* current = root;
-		BSTNode* parent = nullptr;
+		TNode* current = root;
+		TNode* parent = nullptr;
 		
 		while (current != nullptr)
 		{
@@ -114,17 +96,17 @@ protected:
 
 
 public:
-	BST() 
+	Tree() 
 	{	
 		root = nullptr;
-		fictional = new BSTNode(TKey(), TValue(), root, nullptr, nullptr);
+		fictional = new TNode(TKey(), TValue(), root, nullptr, nullptr);
 	}
 
 
-	BST(vector<pair<TKey, TValue>> v) 
+	Tree(vector<pair<TKey, TValue>> v) 
 	{
 		root = nullptr;
-		fictional = new BSTNode(TKey(), TValue(), root, nullptr, nullptr);
+		fictional = new TNode(TKey(), TValue(), root, nullptr, nullptr);
 
 		for (auto p: v) 
 		{	
@@ -135,7 +117,7 @@ public:
 
 	void Print() 
 	{
-		cout << "BST:" << endl;
+		cout << "Tree:" << endl;
 		print(root);
 	}
 
@@ -144,7 +126,7 @@ public:
 	{
 		if (root == nullptr)
 		{
-			root = new BSTNode(key, value, nullptr, nullptr, fictional);
+			root = new TNode(key, value, nullptr, nullptr, fictional);
 			fictional->left = root;
 
 			return;
@@ -152,8 +134,8 @@ public:
 
 		else
 		{
-			BSTNode* current = root;
-			BSTNode* parent = nullptr;
+			TNode* current = root;
+			TNode* parent = nullptr;
 
 			while (current != nullptr)
 			{
@@ -177,7 +159,7 @@ public:
 				}
 			}
 
-			BSTNode* new_node = new BSTNode(key, value, nullptr, nullptr, parent);
+			TNode* new_node = new TNode(key, value, nullptr, nullptr, parent);
 
 			if (key < parent->key)
 		        parent->left = new_node;
@@ -192,7 +174,7 @@ public:
 
 	const TKey& GetNext(const TKey& key) const
 	{
-		BSTNode* x = Search(key);
+		TNode* x = Search(key);
 
 		x = GetNext(x);
 
@@ -202,7 +184,7 @@ public:
 
 	TValue& operator[](const TKey& key) 
 	{
-		BSTNode* x = GetMinimal();
+		TNode* x = GetMinimal();
 
 		if (x == nullptr)
 			throw "No node with this key";
@@ -219,7 +201,7 @@ public:
 
 	void Delete(const TKey& key)
 	{
-		BSTNode* x = Search(key);
+		TNode* x = Search(key);
 		
 
 		// случай 1 (отсутствуют дети)
@@ -273,7 +255,7 @@ public:
 		// ищем successor (наименьший в правом поддереве)
 		else
 		{
-			BSTNode* successor = x->right;
+			TNode* successor = x->right;
 
 			while (successor->left != nullptr)
 				successor = successor->left;
@@ -293,7 +275,7 @@ public:
 	    if (root == nullptr)
 	        return true;
 	    
-	    BSTNode* current = GetMinimal();
+	    TNode* current = GetMinimal();
 	    TKey prev_key = current->key;
 	    
 	    while (true) 
@@ -314,4 +296,30 @@ public:
 	        prev_key = current->key;
 	    }
 	}
+};
+
+
+template <typename TKey, typename TValue>
+struct BSTNode 
+{
+	TKey key;
+	TValue value;
+	BSTNode* left;
+	BSTNode* right;
+	BSTNode* parent;
+
+	BSTNode(TKey k, TValue v, BSTNode* l, BSTNode* r, BSTNode* p) 
+	{
+		key = k;
+		value = v;
+		left = l;
+		right = r;
+		parent = p;
+	}
+};
+
+
+template <typename TKey, typename TValue>
+class BST : public Tree<TKey, TValue, BSTNode<TKey, TValue>> {
+
 };
