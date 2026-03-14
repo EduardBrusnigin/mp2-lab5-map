@@ -4,4 +4,4 @@ include_directories(../gtest)
 include_directories(../src)
 
 add_executable(tests ${SRC_TESTS})
-target_link_libraries(tests bst gtest)
+target_link_libraries(tests gtest)

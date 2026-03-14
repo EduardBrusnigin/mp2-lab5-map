@@ -6,8 +6,28 @@
 using namespace std;
 
 
-template <typename TKey, typename TValue, typename TNode>
-class Tree
+template <typename TKey, typename TValue>
+struct BSTNode 
+{
+	TKey key;
+	TValue value;
+	BSTNode* left;
+	BSTNode* right;
+	BSTNode* parent;
+
+	BSTNode(TKey k, TValue v, BSTNode* l, BSTNode* r, BSTNode* p) 
+	{
+		key = k;
+		value = v;
+		left = l;
+		right = r;
+		parent = p;
+	}
+};
+
+
+template <typename TKey, typename TValue, typename TNode = BSTNode<TKey, TValue>>
+class BST
 {
 protected:
 	TNode* fictional;
@@ -96,14 +116,14 @@ protected:
 
 
 public:
-	Tree() 
+	BST() 
 	{	
 		root = nullptr;
 		fictional = new TNode(TKey(), TValue(), root, nullptr, nullptr);
 	}
 
 
-	Tree(vector<pair<TKey, TValue>> v) 
+	BST(vector<pair<TKey, TValue>> v) 
 	{
 		root = nullptr;
 		fictional = new TNode(TKey(), TValue(), root, nullptr, nullptr);
@@ -122,7 +142,7 @@ public:
 	}
 
 
-	void Insert(const TKey& key, const TValue& value) 
+	virtual void Insert(const TKey& key, const TValue& value) 
 	{
 		if (root == nullptr)
 		{
@@ -199,7 +219,7 @@ public:
 	}
 
 
-	void Delete(const TKey& key)
+	virtual void Delete(const TKey& key)
 	{
 		TNode* x = Search(key);
 		
@@ -298,28 +318,3 @@ public:
 	}
 };
 
-
-template <typename TKey, typename TValue>
-struct BSTNode 
-{
-	TKey key;
-	TValue value;
-	BSTNode* left;
-	BSTNode* right;
-	BSTNode* parent;
-
-	BSTNode(TKey k, TValue v, BSTNode* l, BSTNode* r, BSTNode* p) 
-	{
-		key = k;
-		value = v;
-		left = l;
-		right = r;
-		parent = p;
-	}
-};
-
-
-template <typename TKey, typename TValue>
-class BST : public Tree<TKey, TValue, BSTNode<TKey, TValue>> {
-
-};

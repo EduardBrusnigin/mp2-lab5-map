@@ -1,5 +1,5 @@
 #include "gtest.h"
-#include "bst.cpp"
+#include "bst.h"
 #include <vector>
 #include <utility>
 
