@@ -26,6 +26,35 @@ template <typename TKey, typename TValue>
 class AVL : public BST<TKey, TValue, AVLNode<TKey, TValue>> {
 private:
 	using Node = AVLNode<TKey, TValue>;
+	
+	
+	void LL(const AVLNode* n) {
+		AVLNode* left = n->left;
+		AVLNode* right = n->right;
+		
+		root = left;
+		root->right = ;
+		
+	}
+	
+	
+	
+	void RR() {
+		
+	}
+	
+	
+	
+	void LR() {
+		
+	}
+		
+	
+	
+	void RL() {
+		
+	}
+
 
 public:
 	void Insert(const TKey& key, const TValue& value) override {
