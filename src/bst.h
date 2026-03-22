@@ -38,10 +38,10 @@ protected:
 		if (n == nullptr) 
 			return;
 
-		print(n->left);
+		print(static_cast<TNode*>(n->left));
 		//cout << "[" << n->key << ", " << n->value << "]" << endl;  // release
 		if (n == root) {cout << "(Key: " << n->key << ", Value: " << n->value << ") - root" << endl;} else if (n == fictional) {cout << "(Key: " << n->key << ", Value: " << n->value << ") - fictional" << endl;} else {cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ")" << endl;}  // debug
-		print(n->right);
+		print(static_cast<TNode*>(n->right));
 	}
 
 
@@ -52,14 +52,11 @@ protected:
 		while (current != nullptr && current->key != key)
 		{
 			if (key < current->key)
-				current = current->left;
+				current = static_cast<TNode*>(current->left);
 
 			else if (key > current->key)
-				current = current->right;
+				current = static_cast<TNode*>(current->right);
 		}
-
-		if (!current)
-			throw "No node with this key";
 
 		return current;
 	}
@@ -71,26 +68,26 @@ protected:
 
 		if (x->right == nullptr)
 		{
-			y = x->parent;
+			y = static_cast<TNode*>(x->parent);
 
 			while ((y != fictional) && (y->key < x->key))
 			{
 				x = y;
-				y = x->parent;
+				y = static_cast<TNode*>(x->parent);
 			}
 
 			if (y == fictional)
-				throw "No next node for this node";
+				return static_cast<TNode*>(fictional);
 
 			return y;
 		}
 
 		else 
 		{
-			y = x->right;
+			y = static_cast<TNode*>(x->right);
 
 			while (y->left != nullptr)
-				y = y->left;
+				y = static_cast<TNode*>(y->left);
 
 			return y;
 		}
@@ -108,7 +105,7 @@ protected:
 		while (current != nullptr)
 		{
 			parent = current;
-			current = current->left;
+			current = static_cast<TNode*>(current->left);
 		}
 
 		return parent;
@@ -162,13 +159,13 @@ public:
 				if (key < current->key)
 				{
 					parent = current;
-					current = current->left;
+					current = static_cast<TNode*>(current->left);
 				}
 
 				else if (key > current->key)
 				{
 					parent = current;
-					current = current->right;
+					current = static_cast<TNode*>(current->right);
 				}
 
 				else  // ключ совпал => просто перезаписываем значение, не создавая новый узел
@@ -199,23 +196,6 @@ public:
 		x = GetNext(x);
 
 		return x->key;
-	}
-
-
-	TValue& operator[](const TKey& key) 
-	{
-		TNode* x = GetMinimal();
-
-		if (x == nullptr)
-			throw "No node with this key";
-
-		// обход от минимального
-		while (x->key != key) 
-		{
-			x = GetNext(x);
-		}
-
-		return x->value;
 	}
 
 
@@ -275,10 +255,10 @@ public:
 		// ищем successor (наименьший в правом поддереве)
 		else
 		{
-			TNode* successor = x->right;
+			TNode* successor = static_cast<TNode*>(x->right);
 
 			while (successor->left != nullptr)
-				successor = successor->left;
+				successor = static_cast<TNode*>(successor->left);
 
 			x->key = successor->key;  // меняем значения "удаляемой" ноды 
 		    x->value = successor->value;
@@ -298,23 +278,20 @@ public:
 	    TNode* current = GetMinimal();
 	    TKey prev_key = current->key;
 	    
-	    while (true) 
-	    {	
-	    	try 
-	    	{
-	        	current = GetNext(current);
-	        }
+	    while (current != static_cast<TNode*>(fictional)) 
+	    {   
+	    	current = GetNext(current);
 
-	        catch (...) 
-	        {
-	        	return true;  // GetNext() даёт исключение, когда доходим до фиктивной ноды
-	        }
-	        
+	    	if (current == static_cast<TNode*>(fictional))
+	    		break;
+
 	        if (current->key <= prev_key)
 	            return false;
 	        
 	        prev_key = current->key;
 	    }
+
+	    return true;
 	}
 };
 

@@ -61,16 +61,6 @@ TEST(BST, can_get_next_node)
     EXPECT_TRUE(bst.is_bst());
 }
 
-TEST(BST, can_search)
-{
-    vector<pair<int, double>> v = {{0, 3.14}, {1, -2.7}, {2, 5.1}, {3, 9.9}, {4, -6.3}, {5, 10.13}};
-    BST<int, double> bst(v);
-
-    EXPECT_EQ(bst[3], 9.9);
-    EXPECT_EQ(bst[0], 3.14);
-    EXPECT_EQ(bst[4], -6.3);
-    EXPECT_TRUE(bst.is_bst());
-}
 
 TEST(BST, can_delete)
 {
