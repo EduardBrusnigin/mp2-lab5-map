@@ -46,8 +46,17 @@ private:
 	    if (t2)
 	        t2->parent = A;
 
-	    A->balance = 0;
-		B->balance = 0;
+	    //A->balance = 0;
+		//B->balance = 0;
+		if (B->balance == 0) {
+		    A->balance = 1;
+		    B->balance = -1;
+		} 
+
+		else {
+		    A->balance = 0;
+		    B->balance = 0;
+		}
 
 		return B;
 	}
@@ -77,8 +86,18 @@ private:
 	    if (t2 != nullptr)
 	        t2->parent = A;
 
-	    A->balance = 0;
-		B->balance = 0;
+	    //A->balance = 0;
+		//B->balance = 0;
+
+		if (B->balance == 0) {
+		    A->balance = -1;
+		    B->balance = 1;
+		} 
+
+		else {
+		    A->balance = 0;
+		    B->balance = 0;
+		}
 
 		return B;
 	}
@@ -219,10 +238,53 @@ private:
 	    return get_height(static_cast<Node*>(n->right)) - get_height(static_cast<Node*>(n->left));
 	}
 
+	virtual void print(Node* n) {
+		if (n == nullptr) 
+			return;
+
+		print(static_cast<Node*>(n->left));
+		//cout << "[" << n->key << ", " << n->value << "]" << endl;  // release
+		if (n == this->root) {
+			if (n->left && n->right)
+				cout << "(Key: " << n->key << ", Value: " << n->value << ", left: " << n->left->key << ", right: " << n->right->key << ", balance: " << n->balance << ") - root" << endl;
+			
+			else if (n->right)
+				cout << "(Key: " << n->key << ", Value: " << n->value << ", left: -, right: " << n->right->key << ", balance: " << n->balance << ") - root" << endl;
+			
+			else if (n->left)
+    			cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ", left: " << n->left->key << ", right: -, balance: " << n->balance << ")" << endl;
+
+			else
+				cout << "(Key: " << n->key << ", Value: " << n->value << ", left: -, right: -, balance: " << n->balance << ") - root" << endl;
+		} 
+		
+		else {
+			if (n->left && n->right)
+				cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ", left: " << n->left->key << ", right: " << n->right->key << ", balance: " << n->balance << ")" << endl;
+
+			else if (n->right)
+				cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ", left: -, right: " << n->right->key << ", balance: " << n->balance << ")" << endl;
+			
+			else if (n->left)
+    			cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ", left: " << n->left->key << ", right: -, balance: " << n->balance << ")" << endl;
+
+			else
+				cout << "(Key: " << n->key << ", Value: " << n->value << ", Parent (key): " << n->parent->key << ", left: -, right: -, balance: " << n->balance << ")" << endl;
+		}  
+		print(static_cast<Node*>(n->right));
+	}
+
 
 public:
 	AVL() : BST<TKey, TValue, AVLNode<TKey, TValue>>() {}
-	AVL(vector<pair<TKey, TValue>> v) : BST<TKey, TValue, AVLNode<TKey, TValue>>(v) {}
+
+	AVL(vector<pair<TKey, TValue>> v) {
+		this->root = nullptr;
+		this->fictional = new Node(TKey(), TValue(), this->root, nullptr, nullptr);
+
+		for (auto p: v)
+			Insert(p.first, p.second);
+	}
 
 
 	void Insert(const TKey& key, const TValue& value) override {
@@ -275,7 +337,7 @@ public:
 	    	if (current->balance == -2) {
 	    		Node* new_root;
 
-	    		if (static_cast<Node*>(current->left)->balance == -1)
+	    		if (static_cast<Node*>(current->left)->balance <= 0)
 	    			new_root = LL(current);
 
 	    		else if (static_cast<Node*>(current->left)->balance == 1)
@@ -285,12 +347,14 @@ public:
 	    			this->fictional->left = new_root;
 	    			this->root = new_root;
 	    		}
+
+	    		break;
 	    	}
 
 	    	else if (current->balance == 2) {
 	    		Node* new_root;
 
-	    		if (static_cast<Node*>(current->right)->balance == 1)
+	    		if (static_cast<Node*>(current->right)->balance >= 0)
 	    			new_root = RR(current);
 
 	    		else if (static_cast<Node*>(current->right)->balance == -1)
@@ -300,96 +364,152 @@ public:
 	    			this->fictional->left = new_root;
 	    			this->root = new_root;
 	    		}
+
+	    		break;
 	    	}
 	    }
 	}
 
 
 	void Delete(const TKey& key) override {
+		std::stack<Node*> nodes;
+		std::stack<bool> directions;
+
 		if (this->root == nullptr)
 			throw "No node with this key";
 
 		Node* current = this->root;
 
 		while ((current != nullptr) && (current->key != key)) {
-			if (key < current->key)
-				current = static_cast<Node*>(current->left);
+			nodes.push(static_cast<Node*>(current));
 
-			else if (key > current->key)
+			if (key < current->key) {
+				directions.push(true);
+				current = static_cast<Node*>(current->left);
+			}
+
+			else if (key > current->key) {
+				directions.push(false);
 				current = static_cast<Node*>(current->right);
+			}
 		}
 
 		if (!current || (current->key != key))
 			throw "No node with this key";
 
 
-		TKey deleted_key;
+		Node* target = current;
 
-		// случай: удаляемый узел - лист
-		if (!current->left && !current->right) {
-			Node* parent = static_cast<Node*>(current->parent);
-			deleted_key = current->key;
+		if (target->left && target->right) { 
+			cout << key << endl;
+		//	nodes.push(target);
+			cout << key << endl;
+		//	directions.push(directions.top());
+			cout << key << endl;
 
-			delete current;
-			current = parent;
+			Node* to_delete = static_cast<Node*>(target->right);
+			cout << key << endl;
+
+		//	nodes.push(to_delete);
+
+		//	directions.push(false);
+
+			while (to_delete->left) {
+				to_delete = static_cast<Node*>(to_delete->left);
+		//		nodes.push(to_delete);
+		//		directions.push(true);
+			}
+
+			target->key = to_delete->key;
+			target->value = to_delete->value;
+
+			Node* child = static_cast<Node*>(to_delete->right);
+
+			if (child)
+			    child->parent = static_cast<Node*>(to_delete->parent);
+
+			if (static_cast<Node*>(to_delete->parent)->left == to_delete)
+			    static_cast<Node*>(to_delete->parent)->left = child;
+
+			else
+			    static_cast<Node*>(to_delete->parent)->right = child;
+
+			current = static_cast<Node*>(to_delete->parent);
+			delete to_delete;
+
+			nodes.pop();
+			directions.pop();
 		}
 
-		// не лист
 		else {
-			Node* next = GetNext(current);
-			current->key = next->key;
-			current->value = next->value;
+		    Node* to_delete = target;
+		    Node* parent = static_cast<Node*>(to_delete->parent);
+		    Node* child; 
 
-			current = static_cast<Node*>(next->parent);
+		    if (to_delete->left)
+		    	child = static_cast<Node*>(to_delete->left);
 
-			deleted_key = next->key;
-			delete next;
+		    else
+		    	child = static_cast<Node*>(to_delete->right);
+		    
+		    if (child)
+		        child->parent = parent;
+		    
+		    if (parent->left == to_delete)
+		        parent->left = child;
+
+		    else
+		        parent->right = child;
+		    
+		    current = parent;
+		    delete to_delete;
 		}
+		//cout << nodes.size() << "   " << directions.size() << endl;
 
-		while (current != this->fictional) {
-	    	if (current->key > deleted_key)
-	    		current->balance--;
+		while (!nodes.empty()) {
+			current = nodes.top();
+			nodes.pop();
+			bool from_left = directions.top();
+			directions.pop();
+			
+			current->balance = get_balance(current);
 
-	    	else if (current->key < deleted_key)
-	    		current->balance++;
+			if (current->balance == -2) {
+				Node* new_root;
 
+				if (static_cast<Node*>(current->left)->balance <= 0)
+					new_root = LL(current);
 
-	    	if (current->balance == -2) {
-	    		Node* new_root;
+				else
+					new_root = LR(current);
+				
 
-	    		if (static_cast<Node*>(current->left)->balance == -1)
-	    			new_root = LL(current);
+				if (current == this->root) {
+					this->root = new_root;
+					this->fictional->left = new_root;
+				}
 
-	    		else if (static_cast<Node*>(current->left)->balance == 1)
-	    			new_root = LR(current);
+				//current = new_root;
+			}
 
-	    		if (current == this->root) {
-	    			this->fictional->left = new_root;
-	    			this->root = new_root;
-	    		}
+			else if (current->balance == 2) {
+				Node* new_root;
 
-	    		current = new_root;
-	    	}
+				if (static_cast<Node*>(current->right)->balance >= 0)
+					new_root = RR(current);
 
-	    	else if (current->balance == 2) {
-	    		Node* new_root;
+				else
+					new_root = RL(current);
+				
 
-	    		if (static_cast<Node*>(current->right)->balance == 1)
-	    			new_root = RR(current);
+				if (current == this->root) {
+					this->root = new_root;
+					this->fictional->left = new_root;
+				}
 
-	    		else if (static_cast<Node*>(current->right)->balance == -1)
-	    			new_root = RL(current);
-
-	    		if (current == this->root) {
-	    			this->fictional->left = new_root;
-	    			this->root = new_root;
-	    		}
-
-	    		current = new_root;
-	    	}
-
-	    	current = static_cast<Node*>(current->parent);
-	    }
+				//current = new_root;
+			}
+		}
 	}
 
 

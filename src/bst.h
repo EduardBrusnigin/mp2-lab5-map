@@ -33,7 +33,7 @@ protected:
 	TNode* fictional;
 	TNode* root;
 
-	void print(TNode* n) 
+	virtual void print(TNode* n) 
 	{
 		if (n == nullptr) 
 			return;
@@ -194,6 +194,9 @@ public:
 		TNode* x = Search(key);
 
 		x = GetNext(x);
+
+		if (x == fictional)
+			throw "No node with this key";
 
 		return x->key;
 	}

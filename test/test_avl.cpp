@@ -4,8 +4,7 @@
 #include <utility>
 
 
-TEST(AVL, is_valid_default_constructor) 
-{
+TEST(AVL, is_valid_default_constructor) {
     AVL<int, double> avl;
 
     ASSERT_NO_THROW(avl);
@@ -13,8 +12,7 @@ TEST(AVL, is_valid_default_constructor)
 }
 
 
-TEST(AVL, is_valid_constructor_by_vector) 
-{
+TEST(AVL, is_valid_constructor_by_vector) {
     vector<pair<int, double>> v = {{2, 2.1}, {1, 1.3}, {3, 3.4}, {4, 1.5}};
     AVL<int, double> avl(v);
     
@@ -22,8 +20,7 @@ TEST(AVL, is_valid_constructor_by_vector)
 }
 
 
-TEST(AVL, can_insert_node) 
-{
+TEST(AVL, can_insert_node) {
     AVL<int, double> avl;
 
     EXPECT_NO_THROW(avl.Insert(0, 3.14));
@@ -34,8 +31,7 @@ TEST(AVL, can_insert_node)
 }
 
 
-TEST(AVL, can_print_nodes) 
-{
+TEST(AVL, can_print_nodes) {
     AVL<int, double> avl;
 
     avl.Insert(0, 3.14);
@@ -47,8 +43,7 @@ TEST(AVL, can_print_nodes)
 }
 
 
-TEST(AVL, can_get_next_node) 
-{
+TEST(AVL, can_get_next_node) {
     vector<pair<int, double>> v = {{3, 0}, {1, 0}, {5, 0}, {2, 0}, {7, 0}};
 
     AVL<int, double> avl(v);
@@ -62,8 +57,7 @@ TEST(AVL, can_get_next_node)
 }
 
 
-TEST(AVL, can_delete)
-{
+TEST(AVL, can_delete) {
     vector<pair<int, double>> v = {{0, 3.14}, {1, -2.7}, {2, 5.1}, {3, 9.9}, {4, -6.3}, {5, 10.13}};
     AVL<int, double> avl(v);
     EXPECT_TRUE(avl.is_avl());

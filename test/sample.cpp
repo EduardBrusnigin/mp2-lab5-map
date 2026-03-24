@@ -15,15 +15,17 @@ int main() {
 
     //vector<pair<int, double>> v = {{2, 2.1}, {1, 1.3}, {3, 3.4}, {4, 1.5}};
     //BST<int, double> bst(v);
-    
     //bst.is_bst();
-
     vector<pair<int, double>> v = {{0, 3.14}, {1, -2.7}, {2, 5.1}, {3, 9.9}, {4, -6.3}, {5, 10.13}};
     AVL<int, double> avl(v);
-    avl.is_avl();
     avl.Print();
     avl.Delete(1);
-    avl.Print();
     avl.Delete(3);
-    avl.is_avl();
+    //avl.Print();
+    //avl.Delete(3);
+    //avl.Print();
+    //avl.Delete(1);
+    //avl.Print();
+    //avl.Delete(3);
+    cout << avl.is_avl() << endl;
 }
