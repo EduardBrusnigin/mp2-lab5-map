@@ -13,19 +13,26 @@ TEST(AVL, is_valid_default_constructor) {
 
 
 TEST(AVL, is_valid_constructor_by_vector) {
-    vector<pair<int, double>> v = {{2, 2.1}, {1, 1.3}, {3, 3.4}, {4, 1.5}};
+    vector<pair<int, double>> v = {{2, 2.1}, {1, 1.3}, {3, 3.4}, {4, 1.5}, {8, 0}, {-3, 0}, {4, 0}, {9, 0}, {-5, 0}};
     AVL<int, double> avl(v);
     
     EXPECT_TRUE(avl.is_avl());
 }
 
 
-TEST(AVL, can_insert_node) {
+TEST(AVL, can_insert_node1) {
     AVL<int, double> avl;
 
-    EXPECT_NO_THROW(avl.Insert(0, 3.14));
-    EXPECT_NO_THROW(avl.Insert(1, 2.718));
-    EXPECT_NO_THROW(avl.Insert(2, -9.123));
+    EXPECT_NO_THROW(avl.Insert(7, 0));
+    EXPECT_NO_THROW(avl.Insert(10, 0));
+    EXPECT_NO_THROW(avl.Insert(1, 0));
+    EXPECT_NO_THROW(avl.Insert(5, 0));
+    EXPECT_NO_THROW(avl.Insert(9, 0));
+    EXPECT_NO_THROW(avl.Insert(-3, 0));
+    EXPECT_NO_THROW(avl.Insert(8, 0));
+    EXPECT_NO_THROW(avl.Insert(3, 0));
+    EXPECT_NO_THROW(avl.Insert(-11, 0));
+    EXPECT_NO_THROW(avl.Insert(4, 0));
 
     EXPECT_TRUE(avl.is_avl());
 }
@@ -57,11 +64,28 @@ TEST(AVL, can_get_next_node) {
 }
 
 
-TEST(AVL, can_delete) {
+TEST(AVL, can_delete_node1) {
     vector<pair<int, double>> v = {{0, 3.14}, {1, -2.7}, {2, 5.1}, {3, 9.9}, {4, -6.3}, {5, 10.13}};
     AVL<int, double> avl(v);
     EXPECT_TRUE(avl.is_avl());
     EXPECT_NO_THROW(avl.Delete(1));
     EXPECT_NO_THROW(avl.Delete(3));
+    EXPECT_NO_THROW(avl.Delete(5));
+    EXPECT_NO_THROW(avl.Delete(2));
+    EXPECT_NO_THROW(avl.Delete(4));
+    EXPECT_TRUE(avl.is_avl());
+}
+
+TEST(AVL, can_delete_node2) {
+    vector<pair<int, double>> v = {{15, 0}, {13, 0}, {1, 0}, {3, 0}, {2, 0}, {5, 0}, {6, 0}, {4, 0}, {14, 0}, {12, 0}, {10, 0}, {7, 0}, {9, 0}, {11, 0}, {8, 0}};
+    AVL<int, double> avl(v);
+    EXPECT_TRUE(avl.is_avl());
+    EXPECT_NO_THROW(avl.Delete(15));
+    EXPECT_NO_THROW(avl.Delete(11));
+    EXPECT_NO_THROW(avl.Delete(1));
+    EXPECT_NO_THROW(avl.Delete(3));
+    EXPECT_NO_THROW(avl.Delete(5));
+    EXPECT_NO_THROW(avl.Delete(2));
+    EXPECT_NO_THROW(avl.Delete(4));
     EXPECT_TRUE(avl.is_avl());
 }

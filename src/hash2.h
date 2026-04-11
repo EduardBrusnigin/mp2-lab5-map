@@ -1,2 +1,2 @@
-// Hash table
+// Hash table ("Метод цепочек")
 // Zaplatkin

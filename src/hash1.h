@@ -2,16 +2,151 @@
 // Brusnigin
 
 template <typename TKey, typename TValue>
-class HashTable1 {
+class OAHashTable {
 private:
-	void HashFunction() {
-		
+	struct Entry {
+		signed char status;  // 0 - свободна, -1 - удалена, 1 - занята
+
+		TKey key;
+		TValue value;
+
+		Entry() : status(0) {}
+	};
+
+	int N, M;
+	Entry* Table;
+
+
+	int h1(const TKey& k) {
+		return k % M;
+	}
+
+
+	int h2(const TKey& k) {
+		return 1 + k % (M - 1);
+	}
+
+
+	int Hash(const TKey& k, int i) {
+		return (h1(k) + i*h2(k))%M;
+	}
+
+
+	void Rehashing() {
+		const int primes[] = {17, 37, 79, 163, 331, 673, 1361, 2729, 5471, 10949, 21911, 43853, 87719, 175447};
+
+		int old_M = M;
+		Entry* new_Table;
+
+		for (int i = 0; i < 13; i++)
+			if (primes[i] == M)
+				M = primes[i + 1];
+
+		new_Table = new Entry[M];
+
+		for (int i = 0; i < old_M; i++) {
+			if (Table[i].status == 1) {
+				int j = 0;
+				int ind;
+
+				do {
+					ind = Hash(Table[i].key, j);
+
+					if ((new_Table[ind].status == -1) || (new_Table[ind].status == 0)) {
+						new_Table[ind].key = Table[i].key;
+						new_Table[ind].value = Table[i].value;
+						new_Table[ind].status = 1;
+						break;
+					}
+
+					else
+						j = j + 1;
+
+				} 
+				while (j != M);
+			}
+		}
+
+		delete[] Table;
+		Table = new_Table;
+	}
+
+	int SearchIndex(const TKey& key) {
+		int i = 0;
+		int ind;
+
+		do {
+			ind = Hash(key, i);
+
+			if (Table[ind].status == 0)
+				return -1;
+
+			if (Table[ind].status == 1 && Table[ind].key == key)
+				return ind;
+
+			i = i + 1;
+		} 
+		while (i != M);
+
+		return -1;
 	}
 	
 public:
-	
-
-	TValue& operator[] {
-		
+	OAHashTable() : M(17), N(0) {
+		Table = new Entry[M];
 	}
-}
+
+
+	~OAHashTable() {
+		delete[] Table;
+	}
+
+
+	void Insert(const TKey& key, const TValue& value) {
+		int i = 0;
+
+		do {
+			int ind = Hash(key, i);
+
+			if ((Table[ind].status == -1) || (Table[ind].status == 0)) {
+				Table[ind].key = key;
+				Table[ind].value = value;
+				Table[ind].status = 1;
+				N++;
+				
+				if ((double) N / M > 0.5)
+					Rehashing();
+
+				return;
+			}
+
+			else
+				i = i + 1;
+		} 
+		while (i != M);
+
+		throw "Hash table is overflow!";
+	}
+
+
+	TValue& Search(const TKey& key) {
+		int ind = SearchIndex(key);
+
+		if (ind != -1)
+			return Table[ind].value;
+
+		throw "No entry with this key";
+	}
+
+
+	void Delete(const TKey& key) {
+		int ind = SearchIndex(key);
+
+		if (ind != -1) {
+			Table[ind].status = -1;
+			N--;
+		}
+
+		throw "No entry with this key";
+	}
+};
