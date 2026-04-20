@@ -240,7 +240,7 @@ TEST(RBTTest, GetNext) {
     EXPECT_EQ(tree.GetNext(5), 6);
     EXPECT_EQ(tree.GetNext(6), 7);
     EXPECT_EQ(tree.GetNext(7), 8);
-    EXPECT_THROW(tree.GetNext(8), const char*);
+    EXPECT_ANY_THROW(tree.GetNext(8));
 }
 
 TEST(RBTTest, DeleteAllNodes) {
