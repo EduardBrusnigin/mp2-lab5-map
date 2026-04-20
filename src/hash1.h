@@ -1,9 +1,15 @@
 // Hash table ("С открытой адресацией")
 // Brusnigin
+#include <vector>
+#include <utility>
+#include <iostream>
+
+using std::vector, std::pair, std::cout, std::endl;
+
 
 template <typename TKey, typename TValue>
 class OAHashTable {
-private:
+protected:
 	struct Entry {
 		signed char status;  // 0 - свободна, -1 - удалена, 1 - занята
 
@@ -18,12 +24,17 @@ private:
 
 
 	int h1(const TKey& k) {
-		return k % M;
+		int hash = k % M;
+
+		if (hash < 0) hash += M;
+			return hash;
 	}
 
-
 	int h2(const TKey& k) {
-		return 1 + k % (M - 1);
+		int hash = k % (M - 1);
+
+		if (hash < 0) hash += (M - 1);
+			return 1 + hash;
 	}
 
 
@@ -97,6 +108,15 @@ public:
 	}
 
 
+	OAHashTable(const vector<pair<TKey, TValue>>& vec) : M(17), N(0) {
+		Table = new Entry[M];
+
+		for (const auto& pair : vec) {
+			Insert(pair.first, pair.second);
+		}
+	}
+
+
 	~OAHashTable() {
 		delete[] Table;
 	}
@@ -107,6 +127,11 @@ public:
 
 		do {
 			int ind = Hash(key, i);
+
+			if (Table[ind].status == 1 && Table[ind].key == key) {
+				Table[ind].value = value;
+				return;
+			}
 
 			if ((Table[ind].status == -1) || (Table[ind].status == 0)) {
 				Table[ind].key = key;
@@ -147,6 +172,68 @@ public:
 			N--;
 		}
 
-		throw "No entry with this key";
+		else
+			throw "No entry with this key";
+	}
+
+
+	void Print() const {
+		for (int i = 0; i < M; i++) {
+			if (Table[i].status == 1) {
+				cout << "[" << Table[i].key << ", " << Table[i].value << "]" << endl;
+			}
+		}
+	}
+
+
+	bool is_hash_table() {
+		if (M <= 0 || N < 0 || N > M || Table == nullptr)
+			return false;
+
+		if ((double)N / M > 0.5)
+			return false;
+
+		int used = 0;
+
+		for (int i = 0; i < M; i++) {
+			if (Table[i].status != 0 && Table[i].status != -1 && Table[i].status != 1)
+				return false;
+
+			if (Table[i].status == 1)
+				used++;
+		}
+
+		if (used != N)
+			return false;
+
+
+		for (int i = 0; i < M; i++) {
+			if (Table[i].status == 1) {
+				const TKey& key = Table[i].key;
+				int j = 0;
+				bool correct_pos = false;
+
+				do {
+					int ind = Hash(key, j);
+
+					if (ind == i) {
+						correct_pos = true;
+						break;
+					}
+
+					if (Table[ind].status == 0)
+						break;
+
+					j++;
+
+				} 
+				while (j != M);
+
+				if (!correct_pos)
+					return false;
+			}
+		}
+
+		return true;
 	}
 };
